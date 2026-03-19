@@ -297,4 +297,102 @@
             card.querySelector('[id^="room-sft-"]').innerText = cardMetric.toFixed(1) + (type === 'dims' ? " Sft" : " Qty");
             card.querySelector('[id^="room-total-"]').innerText = Math.round(cardSum).toLocaleString('en-IN');
             subTotal += cardSum;
-            if(cardMetric > 0) indexBody.insertAdjacentHTML('beforeend', `<tr><td>${card.querySelector('.section-title').innerText}</td><td style="text-align:center">${cardMetric.toFixed(1)}</td><td style="text-align:rig
+            if(cardMetric > 0) indexBody.insertAdjacentHTML('beforeend', `<tr><td>${card.querySelector('.section-title').innerText}</td><td style="text-align:center">${cardMetric.toFixed(1)}</td><td style="text-align:right">₹ ${Math.round(cardSum).toLocaleString('en-IN')}</td></tr>`);
+        });
+        const gstRate = parseFloat(document.getElementById('gstRate').value)||0;
+        const gstAmt = Math.round(subTotal * (gstRate/100));
+        document.getElementById('gstLabel').innerText = `GST (${gstRate}%):`;
+        document.getElementById('idx-sub').innerText = "₹ " + Math.round(subTotal).toLocaleString('en-IN');
+        document.getElementById('idx-gst').innerText = "₹ " + gstAmt.toLocaleString('en-IN');
+        document.getElementById('idx-grand').innerText = "₹ " + Math.round(subTotal + gstAmt).toLocaleString('en-IN');
+        document.getElementById('footerGrand').innerText = "₹ " + Math.round(subTotal + gstAmt).toLocaleString('en-IN');
+        document.getElementById('footerSft').innerText = sftTotal.toFixed(1) + " Sft";
+        document.getElementById('footerQty').innerText = Math.round(hqtyTotal) + " Nos";
+    }
+
+    async function searchDatabase() {
+        document.getElementById('searchModal').style.display = 'flex';
+        const snap = await database.ref('quotations').once('value');
+        allQuotes = snap.val() || {}; displayResults(allQuotes);
+    }
+
+    function displayResults(data) {
+        const list = document.getElementById('searchResultsList'); list.innerHTML = '';
+        Object.keys(data).forEach(key => {
+            const phoneDisplay = data[key].phone ? ` - ${data[key].phone}` : '';
+            list.insertAdjacentHTML('beforeend', `<div class="search-item"><span style="cursor:pointer;font-weight:600;flex-grow:1;" onclick="loadRecord('${key}')">${data[key].client} <span style="font-weight:normal; font-size:0.8em; color:#666;">${phoneDisplay}</span></span><button class="btn-del" onclick="deleteQuote('${key}')" title="Delete Saved Quote">✕</button></div>`);
+        });
+    }
+
+    function filterResults() {
+        const q = document.getElementById('dbSearchInput').value.toLowerCase();
+        const filtered = {};
+        Object.keys(allQuotes).forEach(k => { 
+            const nameMatch = allQuotes[k].client && allQuotes[k].client.toLowerCase().includes(q);
+            const phoneMatch = allQuotes[k].phone && allQuotes[k].phone.toLowerCase().includes(q);
+            if(nameMatch || phoneMatch) {
+                filtered[k] = allQuotes[k];
+            }
+        });
+        displayResults(filtered);
+    }
+
+    function loadRecord(key) {
+        const d = allQuotes[key];
+        document.getElementById('cName').value = d.client; document.getElementById('cPhone').value = d.phone || "";
+        document.getElementById('cAddress').value = d.address || ""; document.getElementById('gstRate').value = d.gst || 18;
+        document.getElementById('customNotes').value = d.notes || "";
+        document.getElementById('room-container').innerHTML = ''; roomCount = 0;
+        d.rooms.forEach(r => {
+            renderRoomStructure(r.name, r.type);
+            const curIdx = roomCount-1; document.getElementById(`sec-${curIdx}`).innerHTML = '';
+            r.items.forEach(it => addItem(curIdx, r.type, it));
+        });
+        calculate(); closeSearch();
+    }
+
+    async function saveToCloud() {
+        const name = document.getElementById('cName').value.trim(); if(!name) return alert("Name Required");
+        const data = { client: name, phone: document.getElementById('cPhone').value, address: document.getElementById('cAddress').value, date: document.getElementById('qDate').value, gst: document.getElementById('gstRate').value, notes: document.getElementById('customNotes').value, rooms: [] };
+        document.querySelectorAll('.room-card').forEach(card => {
+            const room = { name: card.querySelector('.section-title').innerText, type: card.dataset.roomType, items: [] };
+            card.querySelectorAll('.measurement-row').forEach(row => {
+                const item = { desc: row.querySelector('.desc-val').value };
+                if (room.type === 'dims') { item.w = row.querySelector('.w-val').value; item.h = row.querySelector('.h-val').value; item.r = row.querySelector('.r-val').value; } 
+                else { item.q = row.querySelector('.q-val').value; item.p = row.querySelector('.amt-val').value; }
+                room.items.push(item);
+            });
+            data.rooms.push(room);
+        });
+        await database.ref('quotations/' + name.replace(/\s+/g, '_')).set(data); alert("Saved!");
+    }
+
+    function closeSearch() { document.getElementById('searchModal').style.display = 'none'; document.getElementById('dbSearchInput').value = ''; }
+    function handlePrint() { window.print(); }
+    async function shareToWhatsApp() {
+        const area = document.getElementById('capture-area');
+        const canvas = await html2canvas(area, { scale: 2 });
+        const blob = await new Promise(res => canvas.toBlob(res));
+        const file = new File([blob], "Quote.png", { type: 'image/png' });
+        if (navigator.share) navigator.share({ files: [file] });
+    }
+    function addNewCategory() {
+        const name = prompt("Enter Category Name:");
+        if(!name) return;
+        const type = confirm("Use Dimensions (Sft)?") ? "dims" : "fixed";
+        renderRoomStructure(name, type);
+    }
+    
+    async function deleteQuote(key) {
+        if(confirm("Are you sure you want to delete this saved quote from the database?")) {
+            await database.ref('quotations/' + key).remove();
+            searchDatabase(); 
+        }
+    }
+    
+    function exportToExcel() {
+        alert("Export logic will execute here based on your xlsx library implementation.");
+    }
+</script>
+</body>
+</html>
