@@ -26,8 +26,27 @@
         .brand-tagline { color: var(--urban-gold); font-size: 0.75rem; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 10px; font-weight: 600; }
         .contact-info-line { font-size: 0.7rem; display: flex; flex-wrap: wrap; gap: 15px; align-items: center; opacity: 0.9; border-top: 1px solid rgba(255,255,255,0.1); padding-top: 10px; margin-top: 5px; }
 
-        .quotation-label { font-size: 0.75rem; font-weight: 800; color: white; text-transform: uppercase; letter-spacing: 2px; border: 1px solid var(--urban-gold); padding: 4px 10px; border-radius: 4px; margin-left: auto; }
+        .quotation-label {
+            font-size: 0.75rem;
+            font-weight: 800;
+            color: white;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            border: 1px solid var(--urban-gold);
+            padding: 4px 10px;
+            border-radius: 4px;
+            margin-left: auto; 
+        }
         
+        .version-tag {
+            position: absolute;
+            top: 10px;
+            right: 15px;
+            font-size: 0.65rem;
+            color: rgba(255,255,255,0.5);
+            font-weight: bold;
+        }
+
         .container { padding: 10px; max-width: 950px; margin: auto; }
         .card { background: white; border-radius: 8px; padding: 15px; margin-bottom: 15px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); border: 1px solid #e0e6ed; overflow: hidden; }
         
@@ -41,10 +60,19 @@
         .summary-table th { text-align: left; padding: 10px 8px; font-size: 0.7rem; text-transform: uppercase; border: none; }
         .summary-table td { padding: 8px; border-bottom: 1px solid #f0f0f0; font-size: 0.8rem; }
         
-        .measurement-row { display: grid; gap: 8px; margin-bottom: 10px; align-items: end; background: var(--row-accent); padding: 12px; border-radius: 6px; border: 1px solid #dee2e6; transition: background 0.2s; }
+        .measurement-row { display: grid; gap: 10px; margin-bottom: 10px; align-items: end; background: var(--row-accent); padding: 12px; border-radius: 6px; border: 1px solid #dee2e6; transition: background 0.2s; }
+        .measurement-row:focus-within { background: #fff; border-color: var(--urban-gold); box-shadow: 0 0 5px rgba(197, 160, 89, 0.3); }
         .row-dims { grid-template-columns: 2fr 0.6fr 0.6fr 0.8fr 0.8fr 1fr auto; }
-        .row-fixed { grid-template-columns: 2fr 0.6fr 0.8fr 0.8fr 1fr auto; }
+        .row-fixed { grid-template-columns: 2.5fr 0.6fr 0.8fr 0.8fr 1fr auto; }
         
+        @media (max-width: 600px) {
+            .row-dims, .row-fixed { grid-template-columns: 1fr 1fr; gap: 8px; }
+            .row-dims div:first-child, .row-fixed div:first-child { grid-column: span 2; }
+            .footer-content { justify-content: space-between; padding: 0 10px; }
+            .footer-stat { min-width: 50px; font-size: 0.8rem; }
+            .quotation-label { margin-left: 0; width: 100%; text-align: center; margin-top: 5px; } 
+        }
+
         .controls { display: flex; gap: 4px; justify-content: flex-end; align-items: center; }
         .btn-move { border:1px solid #ddd; background:white; cursor:pointer; font-size:0.7rem; padding: 3px 6px; border-radius: 3px; }
         .btn-del { border:none; background:none; color:var(--danger); cursor:pointer; font-size:1rem; padding: 0 5px; }
@@ -74,9 +102,15 @@
         #searchResultsList { max-height:300px; overflow-y:auto; border:1px solid #f0f0f0; border-radius:8px; margin: 10px 0; }
         .search-item { padding:12px; border-bottom:1px solid #eee; display:flex; justify-content:space-between; align-items:center; }
 
+        /* FORCED BACKGROUND GRAPHICS FOR PRINTING */
         @media print {
+            *, body { 
+                -webkit-print-color-adjust: exact !important; 
+                print-color-adjust: exact !important; 
+                color-adjust: exact !important; 
+            }
             .no-print, .footer-nav, #searchModal, .btn-del, .btn-move, .btn-action { display: none !important; }
-            body { background: white; padding: 0; margin: 0; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+            body { background: white; padding: 0; margin: 0; }
             .container { max-width: 100%; padding: 0; }
             .card { border: 1px solid #eee !important; page-break-inside: avoid; break-inside: avoid; margin-bottom: 20px; box-shadow: none !important; }
             input { border: none !important; background: transparent !important; padding: 0 !important; }
@@ -89,6 +123,7 @@
 
 <div id="capture-area">
     <div class="brand-header">
+        <div class="version-tag">v1.5</div>
         <div class="brand-name">URBAN CASA</div>
         <div class="brand-tagline">Premium Modular Kitchens & Wardrobes</div>
         <div class="contact-info-line">
@@ -103,9 +138,9 @@
         <div id="summary-section">
             <div class="card">
                 <div class="client-grid">
-                    <div><label>Client Name</label><input type="text" id="cName" placeholder="Full Name" oninput="caps(this)"></div>
+                    <div><label>Client Name</label><input type="text" id="cName" placeholder="Full Name"></div>
                     <div><label>Phone</label><input type="tel" id="cPhone" placeholder="Mobile"></div>
-                    <div><label>Address</label><input type="text" id="cAddress" placeholder="Site Location" oninput="caps(this)"></div>
+                    <div><label>Address</label><input type="text" id="cAddress" placeholder="Site Location"></div>
                     <div><label>Date</label><input type="date" id="qDate"></div>
                     <div><label>GST %</label><input type="number" id="gstRate" value="18" oninput="calculate()"></div>
                 </div>
@@ -124,12 +159,24 @@
                     </thead>
                     <tbody id="index-body"></tbody>
                     <tfoot>
-                        <tr style="font-weight:bold;"><td colspan="3" style="text-align: right; padding: 10px;">Sub-Total:</td><td id="idx-sub" style="text-align: right; padding: 10px;">₹ 0</td></tr>
-                        <tr style="font-weight:bold;"><td colspan="3" id="gstLabel" style="text-align: right; padding: 10px;">GST (18%):</td><td id="idx-gst" style="text-align: right; padding: 10px;">₹ 0</td></tr>
+                        <tr style="font-weight:bold;">
+                            <td colspan="3" style="text-align: right; padding: 10px;">Sub-Total:</td>
+                            <td id="idx-sub" style="text-align: right; padding: 10px;">₹ 0</td>
+                        </tr>
+                        <tr style="font-weight:bold;">
+                            <td colspan="3" id="gstLabel" style="text-align: right; padding: 10px;">GST (18%):</td>
+                            <td id="idx-gst" style="text-align: right; padding: 10px;">₹ 0</td>
+                        </tr>
                         <tr style="background: var(--urban-navy); color: white; font-weight: bold;">
-                            <td colspan="2" style="padding: 12px; text-align: left; font-size: 0.85rem; letter-spacing: 0.5px; color: white;">SFT: <span id="tbl-sft">0</span> &nbsp;&nbsp;|&nbsp;&nbsp; QTY: <span id="tbl-qty">0</span></td>
+                            <td colspan="2" style="padding: 12px; text-align: left; font-size: 0.85rem; letter-spacing: 0.5px; color: white;">
+                                SFT: <span id="tbl-sft">0</span> &nbsp;&nbsp;|&nbsp;&nbsp; QTY: <span id="tbl-qty">0</span>
+                            </td>
                             <td style="text-align: right; padding: 12px;">GRAND TOTAL:</td>
                             <td id="idx-grand" style="text-align: right; padding: 12px;">₹ 0</td>
+                        </tr>
+                        <tr style="background: var(--accent-green); color: white; font-weight: bold;">
+                            <td colspan="2" style="padding: 4px 12px; text-align: left; font-size: 0.7rem; letter-spacing: 0.5px;">TOTAL SAVINGS ON BILL:</td>
+                            <td colspan="2" id="idx-savings" style="text-align: right; padding: 4px 12px; font-size: 0.75rem;">₹ 0</td>
                         </tr>
                     </tfoot>
                 </table>
@@ -148,8 +195,13 @@
                 </div>
                 <div class="card">
                     <div class="section-header"><span class="section-title">Special Notes</span></div>
-                    <textarea id="customNotes" style="height: 100px; border:none; background: #fffdf5;" placeholder="Additional requirements..." oninput="caps(this)"></textarea>
+                    <textarea id="customNotes" style="height: 100px; border:none; background: #fffdf5;" placeholder="Additional requirements..."></textarea>
                 </div>
+            </div>
+
+            <div class="sign-container">
+                <div class="sign-box">Client Signature</div>
+                <div class="sign-box">Store Manager Signature</div>
             </div>
         </div>
 
@@ -185,22 +237,29 @@
             <button class="btn-action bg-save" onclick="saveToCloud()" title="Save Quotation"><i class="fas fa-cloud-upload-alt"></i></button>
             <button class="btn-action bg-search" onclick="searchDatabase()" title="Search Database"><i class="fas fa-search"></i></button>
             <button class="btn-action bg-excel" onclick="exportToExcel()" title="Export to Excel"><i class="fas fa-file-excel"></i></button>
-            <button class="btn-action bg-print" onclick="window.print()" title="Print Quotation"><i class="fas fa-print"></i></button>
+            <button class="btn-action bg-print" onclick="handlePrint()" title="Print Quotation"><i class="fas fa-print"></i></button>
             <button class="btn-action bg-wa" onclick="shareToWhatsApp()" title="Share via WhatsApp"><i class="fab fa-whatsapp"></i></button>
         </div>
     </div>
 </div>
 
 <script>
+    // Global Text Auto-Capitalize Script
+    document.addEventListener('input', function(e) {
+        if (e.target.tagName === 'INPUT' && e.target.type === 'text') {
+            let start = e.target.selectionStart;
+            let val = e.target.value;
+            // Capitalize first letter of every word
+            let capitalized = val.replace(/\b\w/g, char => char.toUpperCase());
+            if (val !== capitalized) {
+                e.target.value = capitalized;
+                e.target.setSelectionRange(start, start);
+            }
+        }
+    });
+
     let roomCount = 0;
     let allQuotes = {};
-
-    function caps(el) {
-        const start = el.selectionStart;
-        const end = el.selectionEnd;
-        el.value = el.value.replace(/\b\w/g, l => l.toUpperCase());
-        el.setSelectionRange(start, end);
-    }
 
     window.onload = () => {
         document.getElementById('qDate').value = new Date().toISOString().split('T')[0];
@@ -223,14 +282,14 @@
             <div class="section-header">
                 <span class="section-title">${name}</span>
                 <div class="controls no-print">
-                    <button class="btn-move" onclick="moveCategory(this.closest('.card'), 'up')">▲</button>
-                    <button class="btn-move" onclick="moveCategory(this.closest('.card'), 'down')">▼</button>
-                    <button class="btn-del" onclick="this.closest('.card').remove();calculate()"><i class="fas fa-trash-alt"></i></button>
+                    <button class="btn-move" onclick="moveCategory(this.closest('.card'), 'up')" title="Move Section Up">▲</button>
+                    <button class="btn-move" onclick="moveCategory(this.closest('.card'), 'down')" title="Move Section Down">▼</button>
+                    <button class="btn-del" onclick="this.closest('.card').remove();calculate()" title="Delete Section"><i class="fas fa-trash-alt"></i></button>
                 </div>
             </div>
             <div id="sec-${idx}"></div>
             <div class="room-footer">
-                <div style="font-size: 0.75rem; font-weight: 800;">${name} Total: <span id="room-sft-${idx}" style="color:var(--urban-orange)">0</span> | <span style="color:var(--accent-green)">₹ <span id="room-total-${idx}">0</span></span></div>
+                <div style="font-size: 0.75rem; font-weight: 800;">${name} Total: <span id="room-sft-${idx}">0</span> | <span style="color:var(--accent-green)">₹ <span id="room-total-${idx}">0</span></span></div>
                 <button class="no-print" style="padding: 5px 10px; background: var(--urban-gold); color:white; border:none; border-radius:4px; font-size: 0.65rem; font-weight: 700; cursor:pointer;" onclick="addItem(${idx}, '${type}')">+ ITEM</button>
             </div>`;
         cont.appendChild(div);
@@ -245,8 +304,11 @@
 
     function moveRow(row, dir) {
         const parent = row.parentNode;
-        if (dir === 'up' && row.previousElementSibling) parent.insertBefore(row, row.previousElementSibling);
-        else if (dir === 'down' && row.nextElementSibling) parent.insertBefore(row.nextElementSibling, row);
+        if (dir === 'up' && row.previousElementSibling) {
+            parent.insertBefore(row, row.previousElementSibling);
+        } else if (dir === 'down' && row.nextElementSibling) {
+            parent.insertBefore(row.nextElementSibling, row);
+        }
         calculate();
     }
 
@@ -255,28 +317,28 @@
         const id = 'r-' + Math.random().toString(36).substr(2, 5);
         const html = (type === 'dims') ? 
             `<div class="measurement-row row-dims" id="${id}">
-                <div><label>Description</label><input type="text" class="desc-val" oninput="caps(this)" value="${data?data.desc:''}"></div>
+                <div><label>Description</label><input type="text" class="desc-val" value="${data?data.desc:''}"></div>
                 <div><label>W</label><input type="number" class="w-val" oninput="calculate()" value="${data?data.w:''}"></div>
                 <div><label>H</label><input type="number" class="h-val" oninput="calculate()" value="${data?data.h:''}"></div>
-                <div><label>MRP Rate</label><input type="number" class="mrp-val" oninput="calculate()" value="${data&&data.mrp?data.mrp:''}"></div>
-                <div><label>Offer Rate</label><input type="number" class="r-val" oninput="calculate()" value="${data?data.r:''}"></div>
+                <div><label>MRP/Sft</label><input type="number" class="mrp-val" oninput="calculate()" value="${data&&data.m!==undefined?data.m:''}"></div>
+                <div><label>Offer/Sft</label><input type="number" class="r-val" oninput="calculate()" value="${data?data.r:''}"></div>
                 <div style="font-weight:bold;color:var(--accent-green)">₹ <span class="row-total">0</span></div>
                 <div class="controls no-print">
-                    <button class="btn-move" onclick="moveRow(this.closest('.measurement-row'), 'up')">▲</button>
-                    <button class="btn-move" onclick="moveRow(this.closest('.measurement-row'), 'down')">▼</button>
-                    <button class="btn-del" onclick="document.getElementById('${id}').remove();calculate()">✕</button>
+                    <button class="btn-move" onclick="moveRow(this.closest('.measurement-row'), 'up')" title="Move Up">▲</button>
+                    <button class="btn-move" onclick="moveRow(this.closest('.measurement-row'), 'down')" title="Move Down">▼</button>
+                    <button class="btn-del" onclick="document.getElementById('${id}').remove();calculate()" title="Delete Row">✕</button>
                 </div>
             </div>` :
             `<div class="measurement-row row-fixed" id="${id}">
-                <div><label>Item</label><input type="text" class="desc-val" oninput="caps(this)" value="${data?data.desc:''}"></div>
+                <div><label>Item</label><input type="text" class="desc-val" value="${data?data.desc:''}"></div>
                 <div><label>Qty</label><input type="number" class="q-val" oninput="calculate()" value="${data?data.q:''}"></div>
-                <div><label>MRP Price</label><input type="number" class="mrp-val" oninput="calculate()" value="${data&&data.mrp?data.mrp:''}"></div>
+                <div><label>MRP</label><input type="number" class="mrp-val" oninput="calculate()" value="${data&&data.m!==undefined?data.m:''}"></div>
                 <div><label>Offer Price</label><input type="number" class="amt-val" oninput="calculate()" value="${data?data.p:''}"></div>
                 <div style="font-weight:bold;color:var(--accent-green)">₹ <span class="row-total">0</span></div>
                 <div class="controls no-print">
-                    <button class="btn-move" onclick="moveRow(this.closest('.measurement-row'), 'up')">▲</button>
-                    <button class="btn-move" onclick="moveRow(this.closest('.measurement-row'), 'down')">▼</button>
-                    <button class="btn-del" onclick="document.getElementById('${id}').remove();calculate()">✕</button>
+                    <button class="btn-move" onclick="moveRow(this.closest('.measurement-row'), 'up')" title="Move Up">▲</button>
+                    <button class="btn-move" onclick="moveRow(this.closest('.measurement-row'), 'down')" title="Move Down">▼</button>
+                    <button class="btn-del" onclick="document.getElementById('${id}').remove();calculate()" title="Delete Row">✕</button>
                 </div>
             </div>`;
         target.insertAdjacentHTML('beforeend', html);
@@ -284,51 +346,77 @@
     }
 
     function calculate() {
-        let sftTotal = 0, hqtyTotal = 0, subTotal = 0, globalMrpTotal = 0;
+        let sftTotal = 0, hqtyTotal = 0, subTotalOffer = 0, subTotalMrp = 0;
         const indexBody = document.getElementById('index-body');
         indexBody.innerHTML = '';
         
         document.querySelectorAll('.room-card').forEach((card) => {
-            let cardSum = 0, cardMetric = 0, cardMrpSum = 0;
+            let cardOfferSum = 0, cardMrpSum = 0, cardMetric = 0;
             const type = card.dataset.roomType;
-            const roomName = card.querySelector('.section-title').innerText;
-
             card.querySelectorAll('.measurement-row').forEach(row => {
-                let val = 0, rowMrpTotal = 0;
-                const mrpVal = parseFloat(row.querySelector('.mrp-val').value) || 0;
+                let offerVal = 0, mrpVal = 0;
                 if(type === 'dims') {
-                    const w = parseFloat(row.querySelector('.w-val').value)||0, h = parseFloat(row.querySelector('.h-val').value)||0, r = parseFloat(row.querySelector('.r-val').value)||0;
-                    const sft = (w*h/144); val = sft * r; rowMrpTotal = sft * mrpVal; cardMetric += sft; sftTotal += sft;
+                    const w = parseFloat(row.querySelector('.w-val').value)||0;
+                    const h = parseFloat(row.querySelector('.h-val').value)||0;
+                    const r = parseFloat(row.querySelector('.r-val').value)||0;
+                    const mInput = parseFloat(row.querySelector('.mrp-val').value);
+                    const mrp = isNaN(mInput) ? r : mInput; // Fallback to Offer Price if MRP is blank
+                    const sft = (w*h/144); 
+                    mrpVal = sft * mrp;
+                    offerVal = sft * r; 
+                    cardMetric += sft; sftTotal += sft;
                 } else {
-                    const q = parseFloat(row.querySelector('.q-val').value)||0, p = parseFloat(row.querySelector('.amt-val').value)||0;
-                    val = q * p; rowMrpTotal = q * mrpVal; cardMetric += q; hqtyTotal += q;
+                    const q = parseFloat(row.querySelector('.q-val').value)||0;
+                    const p = parseFloat(row.querySelector('.amt-val').value)||0;
+                    const mInput = parseFloat(row.querySelector('.mrp-val').value);
+                    const mrp = isNaN(mInput) ? p : mInput; // Fallback to Offer Price if MRP is blank
+                    mrpVal = q * mrp;
+                    offerVal = q * p; 
+                    cardMetric += q; hqtyTotal += q;
                 }
-                row.querySelector('.row-total').innerText = Math.round(val).toLocaleString('en-IN');
-                cardSum += val; cardMrpSum += rowMrpTotal;
+                row.querySelector('.row-total').innerText = Math.round(offerVal).toLocaleString('en-IN');
+                cardMrpSum += mrpVal;
+                cardOfferSum += offerVal;
             });
             
-            card.querySelector('[id^="room-sft-"]').innerText = cardMetric.toFixed(1) + (type === 'dims' ? " Sft" : " Qty");
-            card.querySelector('[id^="room-total-"]').innerText = Math.round(cardSum).toLocaleString('en-IN');
-            subTotal += cardSum; globalMrpTotal += cardMrpSum;
+            card.querySelector('[id^="room-sft-"]').innerHTML = type === 'dims' ? `<span style="color: var(--urban-orange);">${cardMetric.toFixed(1)} Sft</span>` : `${Math.round(cardMetric)} Qty`;
+            card.querySelector('[id^="room-total-"]').innerText = Math.round(cardOfferSum).toLocaleString('en-IN');
+            subTotalMrp += cardMrpSum;
+            subTotalOffer += cardOfferSum;
             
             if(cardMetric > 0) {
+                // Clean SFT text for the summary table
                 const unitText = type === 'dims' ? ' Sft' : ' Qty';
                 const displayMetric = type === 'dims' ? cardMetric.toFixed(1) : Math.round(cardMetric);
-                indexBody.insertAdjacentHTML('beforeend', `<tr><td>${roomName}</td><td style="text-align:center; color:var(--urban-orange); font-weight:bold;">${displayMetric}${unitText}</td><td style="text-align:right; color: #7f8c8d; text-decoration: line-through;">₹ ${Math.round(cardMrpSum).toLocaleString('en-IN')}</td><td style="text-align:right; font-weight: bold; color: var(--urban-navy);">₹ ${Math.round(cardSum).toLocaleString('en-IN')}</td></tr>`);
+                
+                // Add strikethrough logic specifically for MRP
+                const displayMrp = `₹ ${Math.round(cardMrpSum).toLocaleString('en-IN')}`;
+                const strikeHtml = cardMrpSum > cardOfferSum ? `style="text-align:right; color:#888; text-decoration:line-through;"` : `style="text-align:right; color:#888;"`;
+
+                indexBody.insertAdjacentHTML('beforeend', `<tr>
+                    <td>${card.querySelector('.section-title').innerText}</td>
+                    <td style="text-align:center">${displayMetric}${unitText}</td>
+                    <td ${strikeHtml}>${displayMrp}</td>
+                    <td style="text-align:right">₹ ${Math.round(cardOfferSum).toLocaleString('en-IN')}</td>
+                </tr>`);
             }
         });
         
         const gstRate = parseFloat(document.getElementById('gstRate').value)||0;
-        const gstAmt = Math.round(subTotal * (gstRate/100));
-        const grandTotal = Math.round(subTotal + gstAmt);
+        const gstAmt = Math.round(subTotalOffer * (gstRate/100));
+        const totalSavings = Math.round(subTotalMrp - subTotalOffer);
+        
         document.getElementById('gstLabel').innerText = `GST (${gstRate}%):`;
-        document.getElementById('idx-sub').innerText = "₹ " + Math.round(subTotal).toLocaleString('en-IN');
+        document.getElementById('idx-sub').innerText = "₹ " + Math.round(subTotalOffer).toLocaleString('en-IN');
         document.getElementById('idx-gst').innerText = "₹ " + gstAmt.toLocaleString('en-IN');
-        document.getElementById('idx-grand').innerText = "₹ " + grandTotal.toLocaleString('en-IN');
+        document.getElementById('idx-grand').innerText = "₹ " + Math.round(subTotalOffer + gstAmt).toLocaleString('en-IN');
+        document.getElementById('idx-savings').innerText = "₹ " + (totalSavings > 0 ? totalSavings.toLocaleString('en-IN') : "0");
+        
         document.getElementById('tbl-sft').innerText = sftTotal.toFixed(1);
         document.getElementById('tbl-qty').innerText = Math.round(hqtyTotal);
-        document.getElementById('footerGrand').innerText = "₹ " + grandTotal.toLocaleString('en-IN');
-        document.getElementById('footerSft').innerText = sftTotal.toFixed(1) + " Sft";
+
+        document.getElementById('footerGrand').innerText = "₹ " + Math.round(subTotalOffer + gstAmt).toLocaleString('en-IN');
+        document.getElementById('footerSft').innerHTML = `<span style="color: var(--urban-orange);">${sftTotal.toFixed(1)} Sft</span>`;
         document.getElementById('footerQty').innerText = Math.round(hqtyTotal) + " Nos";
     }
 
@@ -342,7 +430,8 @@
         const list = document.getElementById('searchResultsList'); list.innerHTML = '';
         Object.keys(data).forEach(key => {
             const phoneDisplay = data[key].phone ? ` - ${data[key].phone}` : '';
-            list.insertAdjacentHTML('beforeend', `<div class="search-item"><span style="cursor:pointer;font-weight:600;flex-grow:1;" onclick="loadRecord('${key}')">${data[key].client} <span style="font-weight:normal; font-size:0.8em; color:#666;">${phoneDisplay}</span></span><button class="btn-del" onclick="deleteQuote('${key}')">✕</button></div>`);
+            // ONLY displays Client Name and Phone per request
+            list.insertAdjacentHTML('beforeend', `<div class="search-item"><span style="cursor:pointer;font-weight:600;flex-grow:1;" onclick="loadRecord('${key}')">${data[key].client} <span style="font-weight:normal; font-size:0.8em; color:#666;">${phoneDisplay}</span></span><button class="btn-del" onclick="deleteQuote('${key}')" title="Delete Saved Quote">✕</button></div>`);
         });
     }
 
@@ -350,7 +439,11 @@
         const q = document.getElementById('dbSearchInput').value.toLowerCase();
         const filtered = {};
         Object.keys(allQuotes).forEach(k => { 
-            if((allQuotes[k].client && allQuotes[k].client.toLowerCase().includes(q)) || (allQuotes[k].phone && allQuotes[k].phone.toLowerCase().includes(q))) filtered[k] = allQuotes[k];
+            const nameMatch = allQuotes[k].client && allQuotes[k].client.toLowerCase().includes(q);
+            const phoneMatch = allQuotes[k].phone && allQuotes[k].phone.toLowerCase().includes(q);
+            if(nameMatch || phoneMatch) {
+                filtered[k] = allQuotes[k];
+            }
         });
         displayResults(filtered);
     }
@@ -361,63 +454,164 @@
         document.getElementById('cAddress').value = d.address || ""; document.getElementById('gstRate').value = d.gst || 18;
         document.getElementById('customNotes').value = d.notes || "";
         document.getElementById('room-container').innerHTML = ''; roomCount = 0;
-        if (d.rooms) {
-            d.rooms.forEach(r => {
-                renderRoomStructure(r.name, r.type);
-                const curIdx = roomCount-1; document.getElementById(`sec-${curIdx}`).innerHTML = '';
-                if (r.items) r.items.forEach(it => addItem(curIdx, r.type, it));
-            });
-        }
+        d.rooms.forEach(r => {
+            renderRoomStructure(r.name, r.type);
+            const curIdx = roomCount-1; document.getElementById(`sec-${curIdx}`).innerHTML = '';
+            r.items.forEach(it => addItem(curIdx, r.type, it));
+        });
         calculate(); closeSearch();
     }
 
     async function saveToCloud() {
         const name = document.getElementById('cName').value.trim(); if(!name) return alert("Name Required");
-        const data = { client: name, phone: document.getElementById('cPhone').value, address: document.getElementById('cAddress').value, date: document.getElementById('qDate').value, gst: document.getElementById('gstRate').value, notes: document.getElementById('customNotes').value, rooms: [] };
+        const data = { 
+            client: name, 
+            phone: document.getElementById('cPhone').value, 
+            address: document.getElementById('cAddress').value, 
+            date: document.getElementById('qDate').value, 
+            gst: document.getElementById('gstRate').value, 
+            notes: document.getElementById('customNotes').value,
+            totalSft: document.getElementById('tbl-sft').innerText, 
+            rooms: [] 
+        };
         document.querySelectorAll('.room-card').forEach(card => {
             const room = { name: card.querySelector('.section-title').innerText, type: card.dataset.roomType, items: [] };
             card.querySelectorAll('.measurement-row').forEach(row => {
-                const item = { desc: row.querySelector('.desc-val').value, mrp: row.querySelector('.mrp-val').value };
-                if (room.type === 'dims') { item.w = row.querySelector('.w-val').value; item.h = row.querySelector('.h-val').value; item.r = row.querySelector('.r-val').value; } 
-                else { item.q = row.querySelector('.q-val').value; item.p = row.querySelector('.amt-val').value; }
+                const item = { desc: row.querySelector('.desc-val').value };
+                if (room.type === 'dims') { 
+                    item.w = row.querySelector('.w-val').value; 
+                    item.h = row.querySelector('.h-val').value; 
+                    item.m = row.querySelector('.mrp-val').value;
+                    item.r = row.querySelector('.r-val').value; 
+                } else { 
+                    item.q = row.querySelector('.q-val').value; 
+                    item.m = row.querySelector('.mrp-val').value;
+                    item.p = row.querySelector('.amt-val').value; 
+                }
                 room.items.push(item);
             });
             data.rooms.push(room);
         });
-        const uniqueKey = name.replace(/[\.\#\$\[\]\s]/g, '_') + '_' + Date.now();
-        await database.ref('quotations/' + uniqueKey).set(data); alert("Saved successfully!");
+        await database.ref('quotations/' + name.replace(/\s+/g, '_')).set(data); alert("Saved!");
     }
 
     function closeSearch() { document.getElementById('searchModal').style.display = 'none'; document.getElementById('dbSearchInput').value = ''; }
+    
+    function handlePrint() { window.print(); }
     
     async function shareToWhatsApp() {
         const name = document.getElementById('cName').value || "Client";
         const total = document.getElementById('idx-grand').innerText;
         const msg = `*URBAN CASA QUOTATION*%0AClient: ${name}%0AGrand Total: ${total}%0A%0AView details at: https://www.urban-casa.in`;
-        window.open(`https://wa.me/?text=${msg}`);
+        
+        try {
+            const area = document.getElementById('capture-area');
+            const canvas = await html2canvas(area, { scale: 2 });
+            const blob = await new Promise(res => canvas.toBlob(res));
+            const file = new File([blob], "Quote.png", { type: 'image/png' });
+            if (navigator.share) {
+                await navigator.share({ files: [file], title: 'Urban Casa Quote' });
+            } else {
+                window.open(`https://wa.me/?text=${msg}`);
+            }
+        } catch (e) {
+            window.open(`https://wa.me/?text=${msg}`);
+        }
     }
     
     function addNewCategory() {
-        const name = prompt("Enter Category Name:"); if(!name) return;
-        renderRoomStructure(name, confirm("Use Dimensions (Sft)?") ? "dims" : "fixed");
+        const name = prompt("Enter Category Name:");
+        if(!name) return;
+        const type = confirm("Use Dimensions (Sft)?") ? "dims" : "fixed";
+        renderRoomStructure(name, type);
     }
-
+    
     async function deleteQuote(key) {
-        if(confirm("Delete this quote?")) { await database.ref('quotations/' + key).remove(); searchDatabase(); }
+        if(confirm("Are you sure you want to delete this saved quote from the database?")) {
+            await database.ref('quotations/' + key).remove();
+            searchDatabase(); 
+        }
     }
     
     function exportToExcel() {
         const cName = document.getElementById('cName').value || "New_Client";
+        const cPhone = document.getElementById('cPhone').value || "N/A";
         const wb = XLSX.utils.book_new();
-        const summaryData = [["URBAN CASA - Summary"], ["Client:", cName], ["Date:", document.getElementById('qDate').value], [], ["Section", "SFT/UNITS", "MRP", "Offer"]];
-        document.querySelectorAll('#index-body tr').forEach(row => {
+        
+        // --- SHEET 1: SUMMARY ---
+        const summaryData = [
+            ["URBAN CASA - Premium Modular Kitchens & Wardrobes"],
+            ["Location:", "Raichandani Mall - Kompally"],
+            ["Client Name:", cName],
+            ["Contact:", cPhone],
+            ["Date:", document.getElementById('qDate').value],
+            [],
+            ["Section Description", "SFT/UNITS", "Total MRP", "Offer Price"]
+        ];
+
+        const tableRows = document.querySelectorAll('#index-body tr');
+        tableRows.forEach(row => {
             const cols = row.querySelectorAll('td');
-            if(cols.length === 4) summaryData.push([cols[0].innerText, cols[1].innerText, cols[2].innerText, cols[3].innerText]);
+            if(cols.length === 4) {
+                // Since there's no HTML left in the summary columns, we just pull innerText
+                summaryData.push([cols[0].innerText, cols[1].innerText, cols[2].innerText, cols[3].innerText]);
+            }
         });
-        summaryData.push([], ["", "", "GRAND TOTAL:", document.getElementById('idx-grand').innerText]);
+
+        summaryData.push([]);
+        summaryData.push(["", "", "Sub-Total:", document.getElementById('idx-sub').innerText]);
+        summaryData.push(["", "", document.getElementById('gstLabel').innerText, document.getElementById('idx-gst').innerText]);
+        summaryData.push(["", "", "GRAND TOTAL:", document.getElementById('idx-grand').innerText]);
+        summaryData.push(["", "", "TOTAL SAVINGS:", document.getElementById('idx-savings').innerText]);
+
         const wsSummary = XLSX.utils.aoa_to_sheet(summaryData);
+        wsSummary['!cols'] = [{ wch: 35 }, { wch: 15 }, { wch: 15 }, { wch: 20 }];
         XLSX.utils.book_append_sheet(wb, wsSummary, "Summary");
-        XLSX.writeFile(wb, `UrbanCasa_${cName}.xlsx`);
+
+        // --- SHEET 2: DETAILED BREAKDOWN ---
+        const detailData = [
+            ["URBAN CASA - Detailed Item Breakdown"],
+            ["Location:", "Raichandani Mall - Kompally"],
+            ["Client Name:", cName],
+            []
+        ];
+
+        document.querySelectorAll('.room-card').forEach(card => {
+            const roomName = card.querySelector('.section-title').innerText;
+            const type = card.dataset.roomType;
+            detailData.push([`--- ${roomName.toUpperCase()} ---`]);
+            
+            if (type === 'dims') {
+                detailData.push(["Description", "Width (in)", "Height (in)", "MRP/Sft", "Offer/Sft", "Total (INR)"]);
+            } else {
+                detailData.push(["Item Description", "Quantity", "MRP", "Offer Price", "", "Total (INR)"]);
+            }
+
+            card.querySelectorAll('.measurement-row').forEach(row => {
+                const desc = row.querySelector('.desc-val').value || "-";
+                const rowTotal = row.querySelector('.row-total').innerText;
+                if (type === 'dims') {
+                    const w = row.querySelector('.w-val').value || 0;
+                    const h = row.querySelector('.h-val').value || 0;
+                    const m = row.querySelector('.mrp-val').value || 0;
+                    const r = row.querySelector('.r-val').value || 0;
+                    detailData.push([desc, w, h, m, r, rowTotal]);
+                } else {
+                    const q = row.querySelector('.q-val').value || 0;
+                    const m = row.querySelector('.mrp-val').value || 0;
+                    const p = row.querySelector('.amt-val').value || 0;
+                    detailData.push([desc, q, m, p, "", rowTotal]);
+                }
+            });
+            detailData.push([]); 
+        });
+
+        const wsDetails = XLSX.utils.aoa_to_sheet(detailData);
+        wsDetails['!cols'] = [{ wch: 40 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 15 }, { wch: 20 }];
+        XLSX.utils.book_append_sheet(wb, wsDetails, "Detailed Breakdown");
+
+        // --- INITIATE DOWNLOAD ---
+        XLSX.writeFile(wb, `UrbanCasa_Quote_${cName.replace(/\s+/g, '_')}.xlsx`);
     }
 </script>
 </body>
